@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { mongooseAdapter } from "@payloadcms/db-mongodb";
 import { sqliteAdapter } from '@payloadcms/db-sqlite';
+import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from "@payloadcms/email-nodemailer";
 import { importExportPlugin } from "@payloadcms/plugin-import-export";
 import { searchPlugin } from "@payloadcms/plugin-search";
@@ -65,10 +66,17 @@ export default buildConfig({
 	// 		key: process.env.PAYLOAD_DATABASE_KEY_FILE || "",
 	// 	},
 	// }),
-	db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URI || process.env.TURSO_DATABASE_URL || 'file:./sqlite.db',
-      authToken: process.env.AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN || '',
+	// db: sqliteAdapter({
+  //   client: {
+  //     url: process.env.DATABASE_URI || process.env.TURSO_DATABASE_URL || 'file:./sqlite.db',
+  //     authToken: process.env.AUTH_TOKEN || process.env.TURSO_AUTH_TOKEN || '',
+  //   },
+  // }),
+	db: postgresAdapter({
+    // Postgres-specific arguments go here.
+    // `pool` is required.
+    pool: {
+      connectionString: process.env.DATABASE_URL,
     },
   }),
 	editor: lexicalEditor(),
