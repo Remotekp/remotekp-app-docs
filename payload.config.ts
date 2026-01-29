@@ -91,7 +91,10 @@ export default buildConfig({
 	kv: databaseKVAdapter(),
 	plugins: [
 		importExportPlugin({
-			collections: ["docs", "categories"],
+			collections: [
+				{ slug: "docs" },
+				{ slug: "categories" },
+			],
 		}),
 		mcpPlugin({
 			collections: {

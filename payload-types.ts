@@ -333,7 +333,7 @@ export interface Export {
  */
 export interface Import {
   id: number;
-  collectionSlug: undefined;
+  collectionSlug: 'docs' | 'categories';
   importMode?: ('create' | 'update' | 'upsert') | null;
   matchField?: string | null;
   status?: ('pending' | 'completed' | 'partial' | 'failed') | null;
