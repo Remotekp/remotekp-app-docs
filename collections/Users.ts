@@ -9,7 +9,7 @@ export const Users: CollectionConfig = {
   access: {
     // Only owner and admins can access the admin panel
     admin: ({ req: { user } }) => {
-      return Boolean(user?.role === "owner" || user?.role === "admin");
+      return Boolean(user && "role" in user && (user?.role === "owner" || user?.role === "admin"));
     },
     // All authenticated users can read user data
     read: ({ req: { user } }) => {
@@ -18,11 +18,11 @@ export const Users: CollectionConfig = {
     // Owner can create any user, admins can only create normal users
     create: ({ req: { user } }) => {
       // Owner can create any user
-      if (user?.role === "owner") {
+      if (user && "role" in user && user?.role === "owner") {
         return true;
       }
       // Admins can create users (but hooks will ensure they can only create normal users)
-      if (user?.role === "admin") {
+      if (user && "role" in user && user?.role === "admin") {
         return true;
       }
       return false;
@@ -30,11 +30,11 @@ export const Users: CollectionConfig = {
     // Owner can update any user, admins can update normal users, users can update themselves
     update: ({ req: { user }, id }) => {
       // Owner can update anyone
-      if (user?.role === "owner") {
+      if (user && "role" in user && user?.role === "owner") {
         return true;
       }
       // Admins can update users, but not other admins or owners (enforced by query constraint)
-      if (user?.role === "admin") {
+      if (user && "role" in user && user.role === "admin") {
         // Return a query constraint to only allow updating normal users
         return {
           role: {
@@ -48,7 +48,7 @@ export const Users: CollectionConfig = {
     // Owner can delete any user except themselves, admins cannot delete
     delete: ({ req: { user }, id }) => {
       // Owner can delete anyone except themselves
-      if (user?.role === "owner") {
+      if (user && "role" in user && user?.role === "owner") {
         return user.id !== id;
       }
       return false;
@@ -78,7 +78,7 @@ export const Users: CollectionConfig = {
           // If an admin is trying to create a user, prevent them from creating admins or owners
           const currentUser = args.req.user;
           if (
-            currentUser?.role === "admin" &&
+            currentUser && "role" in currentUser && currentUser.role === "admin" &&
             data?.role &&
             data.role !== "user"
           ) {
@@ -1022,10 +1022,10 @@ export const Users: CollectionConfig = {
       access: {
         // Only owner can modify roles
         create: ({ req: { user } }) => {
-          return user?.role === "owner";
+          return user?.collection === "users" && user.role === "owner";
         },
         update: ({ req: { user } }) => {
-          return user?.role === "owner";
+          return user?.collection === "users" && user?.role === "owner";
         },
         // Everyone can read roles
         read: () => true,
@@ -1035,7 +1035,7 @@ export const Users: CollectionConfig = {
         // Hidden on create-first-user page and for admins
         condition: (_data, _siblingData, { user }) => {
           // Show field only if the current user is an owner
-          return user?.role === "owner";
+          return user?.collection === "users" && user?.role === "owner";
         },
         description:
           "Owner: Full system access. Admin: Can create users and content. User: Read-only access. Admins will automatically create users with 'user' role.",

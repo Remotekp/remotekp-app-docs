@@ -12,15 +12,15 @@ export const Categories: CollectionConfig = {
 		read: () => true,
 		// Owner and admins can create categories
 		create: ({ req: { user } }) => {
-			return Boolean(user?.role === "owner" || user?.role === "admin");
+			return Boolean(user?.collection === "users" && (user?.role === "owner" || user?.role === "admin"));
 		},
 		// Owner and admins can update categories
 		update: ({ req: { user } }) => {
-			return Boolean(user?.role === "owner" || user?.role === "admin");
+			return Boolean(user?.collection === "users" && (user?.role === "owner" || user?.role === "admin"));
 		},
 		// Only owner can delete categories
 		delete: ({ req: { user } }) => {
-			return user?.role === "owner";
+			return user?.collection === "users" && user?.role === "owner";
 		},
 	},
 	fields: [

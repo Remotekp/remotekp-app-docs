@@ -15,15 +15,15 @@ export const Docs: CollectionConfig = {
     read: () => true,
     // Owner and admins can create docs
     create: ({ req: { user } }) => {
-      return Boolean(user?.role === "owner" || user?.role === "admin");
+      return Boolean( user?.collection === "users" && (user?.role === "owner" || user?.role === "admin"));
     },
     // Owner and admins can update docs
     update: ({ req: { user } }) => {
-      return Boolean(user?.role === "owner" || user?.role === "admin");
+      return Boolean(user?.collection === "users" && (user?.role === "owner" || user?.role === "admin"));
     },
     // Only owner can delete docs
     delete: ({ req: { user } }) => {
-      return user?.role === "owner";
+      return user?.collection === "users" && user?.role === "owner";
     },
   },
   versions: {
